@@ -13,7 +13,8 @@ public class MainFrame {
     private final JLabel fileLabel;
     private final ContactManager contactManager;
     private final FileManager fileManager;
-    boolean isDarkMode = false;  // Flag para controlar o modo escuro
+    private final JToolBar toolBar;  // Adiciona um campo para a barra de ferramentas
+    private boolean isDarkMode = false;  // Flag para controlar o modo escuro
 
     public MainFrame() {
         contactManager = new ContactManager();
@@ -32,7 +33,7 @@ public class MainFrame {
         JScrollPane scrollPane = new JScrollPane(contactTable);
 
         // Tool Bar setup
-        JToolBar toolBar = new JToolBar();
+        toolBar = new JToolBar();  // Inicializa a barra de ferramentas
         JButton addButton = new JButton("Adicionar");
         JButton editButton = new JButton("Editar");
         JButton excButton = new JButton("Excluir");
@@ -75,7 +76,7 @@ public class MainFrame {
             int selectedRow = contactTable.getSelectedRow();
             if (selectedRow != -1) {
                 Contact contact = contactManager.getContactFromTable(selectedRow, tableModel);
-                contactManager.showAddEditDialog(frame, tableModel, contact);
+                contactManager.showAddEditDialog(frame, tableModel, contact);  
             } else {
                 JOptionPane.showMessageDialog(frame, "Selecione um contato para editar.");
             }
@@ -103,7 +104,7 @@ public class MainFrame {
 
     // Método para abrir a janela de configurações
     private void openSettingsDialog() {
-        new SettingsDialog(frame, this);  // Passa a referência do MainFrame para o SettingsDialog
+        new SettingsDialog(frame, this, isDarkMode);  
     }
 
     // Método para atualizar o label do arquivo carregado
@@ -111,21 +112,38 @@ public class MainFrame {
         fileLabel.setText("Arquivo atual: " + fileName);
     }
 
-    // Método para alternar entre modo claro e escuro
+    // Método para alternar entre modo claro e escuro em todas as janelas
     public void toggleDarkMode(boolean enableDarkMode) {
-        if (enableDarkMode) {
-            isDarkMode = true;  // Ativa o modo escuro
-            frame.getContentPane().setBackground(Color.DARK_GRAY);
-        } else {
-            isDarkMode = false;  // Ativa o modo claro
-            frame.getContentPane().setBackground(Color.LIGHT_GRAY);
+        isDarkMode = enableDarkMode;  
+        updateComponentColors();  // Atualiza os componentes de acordo com o modo
+    }
+
+    // Atualiza as cores dos componentes com base no modo atual
+    private void updateComponentColors() {
+        Color backgroundColor = isDarkMode ? Color.DARK_GRAY : Color.LIGHT_GRAY;
+        Color textColor = isDarkMode ? Color.WHITE : Color.BLACK;
+
+        // Atualiza a cor de fundo do frame
+        frame.getContentPane().setBackground(backgroundColor);
+
+        // Atualiza a cor de todos os componentes da tabela
+        contactTable.setBackground(isDarkMode ? Color.GRAY : Color.WHITE);
+        contactTable.setForeground(textColor);
+        contactTable.setGridColor(isDarkMode ? Color.LIGHT_GRAY : Color.BLACK);
+
+        // Atualiza a cor do toolbar
+        for (Component comp : toolBar.getComponents()) {
+            comp.setBackground(backgroundColor);
+            comp.setForeground(textColor);
         }
 
-        // Atualiza os componentes de acordo com o modo
-        fileLabel.setForeground(isDarkMode ? Color.WHITE : Color.BLACK);
-        categoryFilter.setForeground(isDarkMode ? Color.WHITE : Color.BLACK);
-        searchField.setForeground(isDarkMode ? Color.WHITE : Color.BLACK);
-        contactTable.setForeground(isDarkMode ? Color.WHITE : Color.BLACK);
+        // Atualiza a cor dos campos de texto
+        searchField.setBackground(isDarkMode ? Color.GRAY : Color.WHITE);
+        searchField.setForeground(textColor);
+
+        // Atualiza as cores de outros componentes
+        fileLabel.setForeground(textColor);
+        categoryFilter.setForeground(textColor);
     }
 
     // Getter para saber se o modo escuro está ativado
