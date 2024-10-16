@@ -55,10 +55,10 @@ public class SettingsDialog extends JDialog {
         Color textColor = isDarkMode ? Color.WHITE : Color.BLACK;
         getContentPane().setBackground(backgroundColor);
 
-        // Atualiza as cores de todos os componentes
+        // Percorre e atualiza todos os componentes filhos
         for (Component component : getContentPane().getComponents()) {
-            component.setForeground(textColor);
             component.setBackground(backgroundColor);
+            component.setForeground(textColor);
         }
     }
 }

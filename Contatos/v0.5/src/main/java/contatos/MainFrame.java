@@ -11,9 +11,9 @@ public class MainFrame {
     private final JComboBox<String> categoryFilter;
     private final JTextField searchField;
     private final JLabel fileLabel;
+    private final JPanel filterPanel;  // Agora é uma variável de instância
     private final ContactManager contactManager;
     private final FileManager fileManager;
-    private final JToolBar toolBar;  // Adiciona um campo para a barra de ferramentas
     private boolean isDarkMode = false;  // Flag para controlar o modo escuro
 
     public MainFrame() {
@@ -33,7 +33,7 @@ public class MainFrame {
         JScrollPane scrollPane = new JScrollPane(contactTable);
 
         // Tool Bar setup
-        toolBar = new JToolBar();  // Inicializa a barra de ferramentas
+        JToolBar toolBar = new JToolBar();
         JButton addButton = new JButton("Adicionar");
         JButton editButton = new JButton("Editar");
         JButton excButton = new JButton("Excluir");
@@ -55,7 +55,7 @@ public class MainFrame {
         frame.setJMenuBar(menuBar);
 
         // Filter Panel setup
-        JPanel filterPanel = new JPanel();
+        filterPanel = new JPanel();  // Agora foi movido para uma variável de instância
         JLabel filterLabel = new JLabel("Filtrar por Categoria:");
         categoryFilter = new JComboBox<>(new String[]{"Todos", "Amigo", "Trabalho", "Família"});
         JLabel searchLabel = new JLabel("Buscar:");
@@ -71,12 +71,12 @@ public class MainFrame {
         filePanel.add(fileLabel);  // Adiciona o label ao painel
 
         // Button Actions
-        addButton.addActionListener(e -> contactManager.showAddEditDialog(frame, tableModel, null));
+        addButton.addActionListener(e -> contactManager.showAddEditDialog(frame, tableModel, null, isDarkMode));
         editButton.addActionListener(e -> {
             int selectedRow = contactTable.getSelectedRow();
             if (selectedRow != -1) {
                 Contact contact = contactManager.getContactFromTable(selectedRow, tableModel);
-                contactManager.showAddEditDialog(frame, tableModel, contact);  
+                contactManager.showAddEditDialog(frame, tableModel, contact, isDarkMode);  // Passa o tema para o diálogo
             } else {
                 JOptionPane.showMessageDialog(frame, "Selecione um contato para editar.");
             }
@@ -96,7 +96,7 @@ public class MainFrame {
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
-        frame.add(filterPanel, BorderLayout.SOUTH);
+        frame.add(filterPanel, BorderLayout.SOUTH);  // Agora o filterPanel pode ser acessado
         frame.add(filePanel, BorderLayout.PAGE_END);
 
         frame.setVisible(true);
@@ -104,7 +104,7 @@ public class MainFrame {
 
     // Método para abrir a janela de configurações
     private void openSettingsDialog() {
-        new SettingsDialog(frame, this, isDarkMode);  
+        new SettingsDialog(frame, this, isDarkMode);  // Passa a referência do MainFrame para o SettingsDialog
     }
 
     // Método para atualizar o label do arquivo carregado
@@ -114,40 +114,44 @@ public class MainFrame {
 
     // Método para alternar entre modo claro e escuro em todas as janelas
     public void toggleDarkMode(boolean enableDarkMode) {
-        isDarkMode = enableDarkMode;  
-        updateComponentColors();  // Atualiza os componentes de acordo com o modo
-    }
-
-    // Atualiza as cores dos componentes com base no modo atual
-    private void updateComponentColors() {
+        isDarkMode = enableDarkMode;  // Atualiza a flag
         Color backgroundColor = isDarkMode ? Color.DARK_GRAY : Color.LIGHT_GRAY;
         Color textColor = isDarkMode ? Color.WHITE : Color.BLACK;
 
-        // Atualiza a cor de fundo do frame
         frame.getContentPane().setBackground(backgroundColor);
 
-        // Atualiza a cor de todos os componentes da tabela
-        contactTable.setBackground(isDarkMode ? Color.GRAY : Color.WHITE);
+        // Atualiza a cor da tabela
+        contactTable.setBackground(backgroundColor);
         contactTable.setForeground(textColor);
-        contactTable.setGridColor(isDarkMode ? Color.LIGHT_GRAY : Color.BLACK);
+        contactTable.getTableHeader().setBackground(backgroundColor);
+        contactTable.getTableHeader().setForeground(textColor);
 
-        // Atualiza a cor do toolbar
-        for (Component comp : toolBar.getComponents()) {
-            comp.setBackground(backgroundColor);
-            comp.setForeground(textColor);
+        // Atualiza os componentes da barra de ferramentas
+        for (Component comp : frame.getContentPane().getComponents()) {
+            if (comp instanceof JToolBar) {
+                for (Component toolBarComp : ((JToolBar) comp).getComponents()) {
+                    toolBarComp.setBackground(backgroundColor);
+                    toolBarComp.setForeground(textColor);
+                }
+            }
         }
 
-        // Atualiza a cor dos campos de texto
-        searchField.setBackground(isDarkMode ? Color.GRAY : Color.WHITE);
+        // Atualiza os botões
+        for (Component comp : frame.getContentPane().getComponents()) {
+            if (comp instanceof JButton) {
+                comp.setBackground(backgroundColor);
+                comp.setForeground(textColor);
+            }
+        }
+
+        // Atualiza o painel de filtro
+        filterPanel.setBackground(backgroundColor);  // Agora o filterPanel pode ser acessado
+        categoryFilter.setBackground(backgroundColor);
+        categoryFilter.setForeground(textColor);
+        searchField.setBackground(backgroundColor);
         searchField.setForeground(textColor);
 
-        // Atualiza as cores de outros componentes
+        // Atualiza o label do arquivo
         fileLabel.setForeground(textColor);
-        categoryFilter.setForeground(textColor);
-    }
-
-    // Getter para saber se o modo escuro está ativado
-    public boolean isDarkMode() {
-        return isDarkMode;
     }
 }

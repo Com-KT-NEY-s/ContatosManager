@@ -14,7 +14,7 @@ public class ContactManager {
         contacts = new ArrayList<>();
     }
 
-    public void showAddEditDialog(JFrame parent, DefaultTableModel tableModel, Contact contact) {
+    public void showAddEditDialog(JFrame parent, DefaultTableModel tableModel, Contact contact, boolean darkMode) {
         JDialog dialog = new JDialog(parent, contact == null ? "Adicionar Contato" : "Editar Contato", true);
         dialog.setLayout(new GridLayout(0, 2, 10, 10));
 
