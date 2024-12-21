@@ -1,5 +1,5 @@
 # Projeto de Gerenciamento de Contatos
-###### by Mathiack, Monari & Wesley ft Flarom
+###### by <a href="https://github.com/Mathiack">Mathiack</a>, <a href="https://github.com/Monari14">Monari</a> & <a href="https://github.com/Wesw3s">Wesley</a> ft <a href="https://github.com/flarom">Flarom</a>
 ![GitHub repo size](https://img.shields.io/github/repo-size/Com-KT-NEY-s/ContatosManager?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/Com-KT-NEY-s/ContatosManager?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/Com-KT-NEY-s/ContatosManager?style=for-the-badge)
